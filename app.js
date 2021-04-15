@@ -1,18 +1,40 @@
-const http = require('http')
+// Gives promisfiy power to fs imports
+const { readFile, writeFile } = require('fs').promises
 
-const server = http.createServer((req, res) => {
-  if (req.url === '/') {
-    res.end('Welcome to the show!!')
-  }
-  if (req.url === '/about') {
-    res.end('You found our history!!')
-  }
-  res.end(`
-    <h1>Nope</h1>
-    <p>This isn't anything!</p>
-    <a href="/"> Go Back </a>
-  `)
-  
-})
+// Without .promises
+// const util = require('util')
+// const readFilePromise = util.promisify(readFile)
+// const writeFilePromise = util.promisify(writeFile)
 
-server.listen(5000)
+
+const start = async() => {
+  try {
+    const first = await readFile('./content/first.txt', 'utf8')
+    const second = await readFile('./content/second.txt','utf8')
+    console.log(first, second)
+    await writeFile('./content/result-promisify.txt', `You learned how to do this! ${first} ${second}`,
+    { flag: 'a'}
+    )
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+start()
+
+
+// getText('./content/first.txt')
+//   .then((result) => console.log(result))
+//   .catch((err => console.log(err)))
+
+// const getText = (path) => {
+//   return new Promise((resolve, reject) => {
+//     readFile(path, 'utf8', (err, data) => {
+//       if (err) {
+//         reject(err)
+//       } else {
+//         resolve(data)
+//       }
+//     })
+//   })
+// }
