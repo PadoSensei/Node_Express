@@ -1,24 +1,21 @@
 const express = require('express')
 const app = express()
-const logger = require('./logger')
-const  auth = require('./auth')
-const morgan = require('morgan')
 
-// req => middleware => res
+const people = require('./routes/people')
+const auth = require('./routes/auth')
 
-app.use(morgan('tiny'))
+// Static Assets
+app.use(express.static('./methods-public'))
 
-app.get('/', [logger, auth], (req, res) => {
-  
-  res.send('Home')
-})
+// parse form data
+app.use(express.urlencoded({ extended: false }))
 
-app.get('/about', (req, res) => {
-  console.log(req.user)
-  res.send('About')
-})
+// parse json
+app.use(express.json())
 
+app.use('/login', auth)
+app.use('/api/people', people)
 
 app.listen(5000, () => {
-  console.log('Server running on 5000')
+  console.log('Server is listening on port 5000....')
 })
